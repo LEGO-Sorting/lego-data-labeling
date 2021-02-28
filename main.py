@@ -49,6 +49,7 @@ def construct_training_file():
     output_data_train = open("data_train_labels.txt", "w")
     recordsCount = 1
     image_files = get_images()
+    print(len(image_files))
     print(image_files)
     # labels = read_label_ids()
 
@@ -58,6 +59,8 @@ def construct_training_file():
 
         if get_box(im) is None:
             continue
+        if recordsCount > len(image_files):
+            break
         line = image_path + ' ' + ' '.join(map(str, get_box(im))) + ' ' + os.path.splitext(label)[0]
         output_data_train.write(line)
         output_data_train.write("\n")
@@ -67,5 +70,5 @@ def construct_training_file():
 
 if __name__ == '__main__':
     construct_training_file()
-    result = list_files_recursive(os.getcwd() + "/Data/")
-    print(result)
+    # result = list_files_recursive(os.getcwd() + "/Data/")
+    # print(result)
