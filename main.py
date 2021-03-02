@@ -46,7 +46,7 @@ def get_images():
 
 
 def construct_training_file():
-    output_data_train = open("data_train_labels.txt", "w")
+    output_data_train = open("data_train_labels.csv", "w")
     recordsCount = 1
     image_files = get_images()
     print(len(image_files))
@@ -61,7 +61,7 @@ def construct_training_file():
             continue
         if recordsCount > len(image_files):
             break
-        line = image_path + ' ' + ' '.join(map(str, get_box(im))) + ' ' + os.path.splitext(label)[0]
+        line = str(image_path) + ',' + ','.join(map(str, get_box(im))) + ',' + str(os.path.splitext(label)[0])
         output_data_train.write(line)
         output_data_train.write("\n")
         recordsCount = recordsCount + 1
