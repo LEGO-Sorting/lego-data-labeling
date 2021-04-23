@@ -20,7 +20,19 @@ def go_through_files():
                 if str(image).endswith(".xml"):
                     # print(image)
                     change_path_files(image)
+                    add_category(image, catalog_number)
                 # yield brick_type, catalog_number, image
+
+
+def add_category(xml_image_path, category):
+    tree = ET.parse(xml_image_path)
+    tree_root = tree.getroot()
+    attrib = {}
+    category_element = tree_root.makeelement('category', attrib)
+    category_element.text = category
+
+    tree_root.append(category_element)
+    tree.write(xml_image_path)
 
 
 def change_path_files(xml_image_path):
