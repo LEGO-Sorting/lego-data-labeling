@@ -18,19 +18,21 @@ def go_through_files():
         brick_type_path = os.path.join(DATASET_ROOT_DIR, brick_type)
 
         for catalog_number in os.listdir(brick_type_path):
-            if catalog_number not in available_categories:
-                print("category " + catalog_number + " is not available")
-                continue
             catalog_number_path = os.path.join(brick_type_path, catalog_number)
             original_path = os.path.join(catalog_number_path, "original")
 
             for img in os.listdir(original_path):
                 image = os.path.join(original_path, img)
+
                 if str(image).endswith(".xml"):
+                    if catalog_number not in available_categories:
+                        print("category " + catalog_number + " is not available")
+                        change_path_files(image)
+                        add_category(image, "unknown")
+                        continue
                     # print(image)
                     change_path_files(image)
                     add_category(image, catalog_number)
-                # yield brick_type, catalog_number, image
 
 
 def add_category(xml_image_path, category):
@@ -40,6 +42,10 @@ def add_category(xml_image_path, category):
     category_element = tree_root.makeelement('category', attrib)
     category_element.text = category
 
+    for elem in tree_root.iter('category'):
+        elem.text = str(category)
+        tree.write(xml_image_path)
+        return
     tree_root.append(category_element)
     tree.write(xml_image_path)
 

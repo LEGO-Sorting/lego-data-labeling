@@ -3,7 +3,7 @@ import os
 
 
 DATA_CLASSES_FILE = './predefined_classes.txt'
-DATASET_DIR = os.getcwd() + "/Data/"
+DATASET_DIR = os.getcwd() + "/TrainYourOwnYOLO/Data/Source_Images/Training_Images/artificial"
 
 
 def list_files_recursive(path):
@@ -46,22 +46,24 @@ def get_images():
 
 
 def construct_training_file():
-    output_data_train = open("data_train_labels.csv", "w")
+    output_data_train = open("data_train_labels.txt", "w")
     recordsCount = 1
     image_files = get_images()
     print(len(image_files))
-    print(image_files)
-    # labels = read_label_ids()
+    # print(image_files)
+    labels = read_label_ids()
 
     for image_path in image_files:
         im = Image.open(image_path)
-        label = os.path.basename(image_path)
+        file_name = os.path.basename(image_path)
+        class_string = os.path.splitext(file_name)[0]
+        class_number = labels.index(class_string)
 
         if get_box(im) is None:
             continue
         if recordsCount > len(image_files):
             break
-        line = str(image_path) + ',' + ','.join(map(str, get_box(im))) + ',' + str(os.path.splitext(label)[0])
+        line = str(image_path) + ' ' + ','.join(map(str, get_box(im))) + ',' + str(class_number)
         output_data_train.write(line)
         output_data_train.write("\n")
         recordsCount = recordsCount + 1
@@ -69,6 +71,7 @@ def construct_training_file():
 
 
 if __name__ == '__main__':
+    print(DATASET_DIR)
     construct_training_file()
     # result = list_files_recursive(os.getcwd() + "/Data/")
     # print(result)
