@@ -1,9 +1,7 @@
 from PIL import Image, ImageChops
 import os
-
-
-DATA_CLASSES_FILE = './predefined_classes.txt'
-DATASET_DIR = os.getcwd() + "/Data/"
+import utils
+import consts
 
 
 def list_files_recursive(path):
@@ -33,35 +31,31 @@ def get_box(im):
     return box
 
 
-def read_label_ids():
-    label_file = open(DATA_CLASSES_FILE, "r")
-    labels = label_file.read().splitlines()
-    return labels
-
-
 def get_images():
-    file_names = list_files_recursive(DATASET_DIR)
+    file_names = list_files_recursive(consts.DATASET_DIR)
     file_names.sort()
     return file_names
 
 
 def construct_training_file():
-    output_data_train = open("data_train_labels.csv", "w")
+    output_data_train = open("data_train_labels.txt", "w")
     recordsCount = 1
     image_files = get_images()
     print(len(image_files))
-    print(image_files)
-    # labels = read_label_ids()
+    # print(image_files)
+    labels = utils.read_label_ids()
 
     for image_path in image_files:
         im = Image.open(image_path)
-        label = os.path.basename(image_path)
+        file_name = os.path.basename(image_path)
+        class_string = os.path.splitext(file_name)[0]
+        class_number = labels.index(class_string)
 
         if get_box(im) is None:
             continue
         if recordsCount > len(image_files):
             break
-        line = str(image_path) + ',' + ','.join(map(str, get_box(im))) + ',' + str(os.path.splitext(label)[0])
+        line = str(image_path) + ' ' + ','.join(map(str, get_box(im))) + ',' + str(class_number)
         output_data_train.write(line)
         output_data_train.write("\n")
         recordsCount = recordsCount + 1
@@ -69,6 +63,7 @@ def construct_training_file():
 
 
 if __name__ == '__main__':
+    print(consts.DATASET_DIR)
     construct_training_file()
     # result = list_files_recursive(os.getcwd() + "/Data/")
     # print(result)
