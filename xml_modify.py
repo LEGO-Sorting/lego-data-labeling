@@ -1,21 +1,14 @@
 import os
+import utils
+import consts
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-DATASET_ROOT_DIR = "actual-dataset-22-04-2021/"
-DATA_CLASSES_FILE = './predefined_classes.txt'
-
-
-def read_label_ids():
-    label_file = open(DATA_CLASSES_FILE, "r")
-    labels = label_file.read().splitlines()
-    return labels
-
 
 def go_through_files():
-    available_categories = read_label_ids()
-    for brick_type in os.listdir(DATASET_ROOT_DIR):
-        brick_type_path = os.path.join(DATASET_ROOT_DIR, brick_type)
+    available_categories = utils.read_label_ids()
+    for brick_type in os.listdir(consts.ACTUAL_DATASET_ROOT_DIR):
+        brick_type_path = os.path.join(consts.ACTUAL_DATASET_ROOT_DIR, brick_type)
 
         for catalog_number in os.listdir(brick_type_path):
             catalog_number_path = os.path.join(brick_type_path, catalog_number)
@@ -26,11 +19,10 @@ def go_through_files():
 
                 if str(image).endswith(".xml"):
                     if catalog_number not in available_categories:
-                        print("category " + catalog_number + " is not available")
+                        print("category " + catalog_number + " is not available. Marked as an unknown.")
                         change_path_files(image)
                         add_category(image, "unknown")
                         continue
-                    # print(image)
                     change_path_files(image)
                     add_category(image, catalog_number)
 
@@ -57,7 +49,6 @@ def change_path_files(xml_image_path):
     for elem in tree_root.iter('path'):
         xml_path = Path(xml_image_path)
         elem.text = str(xml_path.with_suffix('.jpg'))
-        # print(xml_path.with_suffix('.jpg'))
     tree.write(xml_image_path)
 
 
