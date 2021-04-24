@@ -50,9 +50,6 @@ def go_through_files():
         brick_type_path = os.path.join(consts.ACTUAL_DATASET_ROOT_DIR, brick_type)
 
         for catalog_number in os.listdir(brick_type_path):
-            if catalog_number not in available_categories:
-                print("category " + catalog_number + " is not available")
-                continue
             catalog_number_path = os.path.join(brick_type_path, catalog_number)
             original_path = os.path.join(catalog_number_path, "original")
 
