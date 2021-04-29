@@ -14,7 +14,7 @@ def read_label_ids():
 def find_boxes_on_single_image(xml_path):
     found_box = TxtBoundingBox()
     path_to_image = os.path.join(Path().absolute(), 'TrainYourOwnYOLO', 'Data', 'Source_Images', 'Training_Images',
-                                 xml_path)
+                                 str(Path(xml_path).with_suffix('.jpg')))
     found_box.absolute_path = path_to_image
     tree = ET.parse(xml_path)
     tree_root = tree.getroot()
