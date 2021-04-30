@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from PIL import Image, ImageChops
 import os
 import utils
@@ -38,7 +40,7 @@ def get_images():
 
 
 def construct_training_file():
-    output_data_train = open("data_train_labels.txt", "w")
+    output_data_train = open("data_train.txt", "w")
     recordsCount = 1
     image_files = get_images()
     print(len(image_files))
@@ -48,7 +50,7 @@ def construct_training_file():
     for image_path in image_files:
         im = Image.open(image_path)
         file_name = os.path.basename(image_path)
-        class_string = os.path.splitext(file_name)[0]
+        class_string = os.path.basename(os.path.dirname(image_path))
         class_number = labels.index(class_string)
 
         if get_box(im) is None:
