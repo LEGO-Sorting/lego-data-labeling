@@ -1,10 +1,21 @@
 import csv
+import os
 import consts
 import utils
 
 
+def write_serialized_csv(serialized_data):
+    with open(consts.SERIALIZED_TEST_RESULTS_PATH, "w+") as my_csv:
+        csv_writer = csv.writer(my_csv, delimiter=',')
+        csv_writer.writerows(serialized_data)
+
+
+def check_decision(label, image_name):
+    return label in os.path.basename(image_name)
+
+
 def serialize_test_results():
-    csv_file = open(consts.TEST_RESULTS_PATH, 'r')
+    csv_file = open(consts.TEST_RESULTS_PATH, 'r+')
     reader = csv.reader(csv_file)
     training_categories = utils.read_label_ids()
     detected_objects = []
@@ -16,12 +27,14 @@ def serialize_test_results():
 
     for row in detected_objects:
         if row[6] == 'label':
+            row.append('decision')
             continue
         category_index = int(row[6])
-        # row[6] = training_categories[row[6].__getitem__()]
-        row[6] = training_categories[category_index]
+        category = training_categories[category_index]
+        row[6] = category
+        row.append('HIT' if check_decision(category, row[0]) else 'MISS')
     print(detected_objects)
-
+    write_serialized_csv(detected_objects)
     csv_file.close()
 
 
